@@ -1,4 +1,6 @@
+****
 这是 `solego` 的个人算法模板
+***
 
 目前有 `4` 个算法模板
 - SparseTable.cpp        `ST表`
@@ -14,4 +16,4 @@
 1. 每个文件夹代表一个算法的相关内容，以下以 `Templates/SparseTable` 为例
 2. `Templates/SparseTable/01.cpp` 是 `ST表` 这个算法的第一道练习例题，`02.cpp`，`03.cpp` 分别对应第二道和第三道，以此类推。
 3. `Templates/SparseTable/README.md` 是 `ST` 表这个算法的主要介绍
-4. `Templates/SparseTable/SparseTable*.cpp` 是 `ST` 表这个算法的实现，通常是会封装成 `class` 或者 `struct` ，也有因为时间限制仅用数组实现 
+4. `Templates/SparseTable/SparseTable*.cpp` 是 `ST` 表这个算法的实现，通常是会封装成 `class` 或者 `struct` ，也有因为时间限制仅用数组实现

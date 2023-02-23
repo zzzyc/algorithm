@@ -1,3 +1,7 @@
+/*
+    本题是数组实现形式，注意使用时 class StringHash 的对象需要开在全局
+    因为这类使用 64 位整数的运算相对较慢，因此这里不再提供 vector 版本
+*/
 #include <bits/stdc++.h>
 
 class StringHash {
