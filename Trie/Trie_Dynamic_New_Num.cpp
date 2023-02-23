@@ -1,5 +1,7 @@
+/*
+    Vector版本
+*/
 #include <bits/stdc++.h>
-using namespace std;
 
 struct TrieNode {
 
