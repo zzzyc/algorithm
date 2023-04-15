@@ -1,8 +1,107 @@
-> bigsmall 是一种将问题暴力解在其擅长的数据规模下使用的方法，也叫根号分治。
+> BigSmall 是一种将问题暴力解在其擅长的数据规模下使用的方法，也叫根号分治。
 
 # 牛客练习赛110 G. 嘤嘤的闺蜜
-给你一个  $n$  行  $m$  列的矩阵  $a$ , 初始值都为 $0$ , 给一些位置赋值, 之后每次询问给出  t  个数  $b_{1}, \ldots, b_{t}$ , 求  $\sum_{i=1}^{n} \max \left(a_{i b 1}, \ldots, a_{i b t}\right)$  。
+**简化题意：**
+给你一个  $n$  行  $m$  列的矩阵  $a$ , 初始值都为 $0$ , 给一些位置赋值, 之后 $q$ 次询问，每次询问给出  $t$  个数  $b_{1}, \ldots, b_{t}$ , 求  $\sum_{i=1}^{n} \max \left(a_{i,b_{1}}, \ldots, a_{i,b_t}\right)$  。
 
+数据范围：$1\leq n,m,q\leq 10^5,1\leq t\leq 2,1\leq b_i\leq m,1\leq a_{i,j}\leq 10^9$
+
+**题解：**
+- 当 $t = 1$，只需要统计每个闺蜜对 $b_1$ 这个颜色的喜欢值之和，这部分可以在输入时预处理出。
+
+- 当 $t = 2$，我们定义 $sqm=\sqrt{m}$，一个颜色被超过 $sqm$ 个人喜欢，则称其为大颜色，否则称其为小颜色。
+	- 如果查询的时候，两个颜色都是小颜色，那么直接暴力即可，最多 $\sqrt{m}$ 次操作。
+	- 对于每个大颜色，预处理出其与其他颜色在查询时的喜欢值之和即可。因为大颜色最多 $\sqrt{m}$ 个，故预处理复杂度为 $O(m\sqrt{m})$ 。
+
+**时间复杂度分析：**
+- 当 $t = 1$ 时，这部分答案是直接在输入时顺便预处理的，查询的时间复杂度为 $O(1)$，总时间复杂度为 $O(q)$
+- 当 $t = 2$
+	- 小颜色与小颜色，单次暴力时间复杂度为 $O(\sqrt{m})$ ，总时间复杂度为 $O(q\sqrt{m})$
+	- 大颜色与其他颜色，预处理复杂度为 $O(m\sqrt{m})$ ，单次查询复杂度为 $O(1)$ ，总时间复杂度为 $O(m\sqrt{m})$
+
+综上，因为 $q$ 和 $m$ 同阶，故总时间复杂度为 $O(m\sqrt{m})$
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+const int SQN = 320;
+long long f[SQN][N];
+long long value[N];
+vector<pair<int, int>> g[N];
+int id2col[N];
+int col2id[N];
+int n, m, q;
+int sqm;
+
+int temp[N];
+
+int main()
+{
+    scanf("%d%d%d", &n, &m, &q);
+    sqm = sqrt(m);
+
+    for (int i = 1; i <= m; ++i) {
+        int x, c, l;
+        scanf("%d%d%d", &x, &c, &l);
+        value[c] += l;
+        g[c].emplace_back(x, l);
+    }
+
+    for (int i = 1; i <= m; ++i) id2col[i] = i;
+    sort(id2col + 1, id2col + m + 1, [&](const int x, const int y) {
+        return g[x].size() > g[y].size();
+    });
+
+    for (int i = 1; i <= m; ++i) col2id[id2col[i]] = i;
+
+    for (int i = 1; i <= m; ++i) {
+        int coli = id2col[i];
+        if (g[coli].size() <= sqm) break;
+
+        long long sum = 0;
+        for (auto [x, l]: g[coli]) temp[x] = l, sum += l;
+        for (int j = i + 1; j <= m; ++j) {
+            int colj = id2col[j];
+            long long add = 0;
+            for (auto [x, l]: g[colj])
+                if (temp[x] < l) add += l - temp[x];
+            f[i][j] = sum + add;
+            if (g[colj].size() > sqm) f[j][i] = f[i][j];
+        }
+        for (auto [x, l]: g[coli]) temp[x] = 0;
+    }
+
+    while (q--) {
+        int t, colx, coly; scanf("%d%d", &t, &colx);
+        if (t == 1) {
+            printf("%lld\n", value[colx]);
+        } else {
+            scanf("%d", &coly);
+            if (colx == coly) {
+                printf("%lld\n", value[colx]);
+                continue ;
+            }
+
+            if (g[colx].size() < g[coly].size()) swap(colx, coly);
+            if (g[colx].size() > sqm) {
+                printf("%lld\n", f[col2id[colx]][col2id[coly]]);
+            } else {
+                long long sum = 0;
+                for (auto [x, l]: g[colx]) temp[x] = l, sum += l;
+
+                for (auto [x, l]: g[coly])
+                    if (temp[x] < l) sum += l - temp[x];
+
+                for (auto [x, l]: g[colx]) temp[x] = 0;
+                printf("%lld\n", sum);
+            }
+        }
+    }
+
+    return 0;
+}
+```
 
 # EDU19 E. Array Queries
 **题意：**
