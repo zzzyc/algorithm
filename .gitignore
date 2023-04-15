@@ -1,1 +1,5 @@
-/Ztest
+/Ztest/
+/.idea/
+/.vscode/
+.gitignore
+.DS_store
