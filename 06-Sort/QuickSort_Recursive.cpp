@@ -1,6 +1,6 @@
 /*
     题目：快速排序
-    题目链接：https://www.acwing.com/problem/content/789/
+    题目链接：https://www.acwing.com/problem/content/787/
     题目类型：递归版本的快速排序
 */
 
