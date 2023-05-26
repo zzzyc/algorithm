@@ -16,16 +16,14 @@ private:
 
 public:
 
-    SparseTable(int n, std::function<int(int,int)> comp): n(n), comp(comp) {
-        init(n);
-    }
+    SparseTable(std::function<int(int,int)> comp = [](int a, int b) {return std::max(a, b);}, int n = N - 1): n(n), comp(comp) {}
 
     void init(int n = N - 1) {
         lg[1] = 0;
         for (int i = 2; i <= n; ++i) lg[i] = lg[i / 2] + 1;
     }
 
-    void build(int a[], int n) {
+    void build(const int a[], int n) {
         for (int i = 1; i <= n; ++i) f[0][i] = a[i];
         for (int i = 1; i < BIT; ++i)
             for (int j = 1; j + (1 << i) - 1 <= n; ++j)

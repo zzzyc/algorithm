@@ -16,7 +16,8 @@ private:
 
 public:
 
-    SparseTable(std::function<int(int,int)> comp = [](int a, int b) {return a > b;}): n(n), maxbit(0), comp(comp) {}
+    // 默认情况下是返回区间最大值
+    SparseTable(std::function<int(int,int)> comp = [](int a, int b) {return std::max(a, b);}, int n = N - 1): n(n), maxbit(0), comp(comp) {}
 
     void init(int len = N - 1) {
         n = len;
@@ -30,7 +31,8 @@ public:
         f = std::vector<std::vector<int>>(maxbit + 1, std::vector<int>(n + 1));
     }
 
-    void build(int a[], int n) {
+    // index 从 1 开始
+    void build(const int a[], int n) {
         init(n);
         for (int i = 1; i <= n; ++i) f[0][i] = a[i];
         for (int i = 1; i <= maxbit; ++i)
