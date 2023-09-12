@@ -30,6 +30,7 @@ private:
 public:
 
     LRUCache(int capacity): capacity_(capacity) {
+        size_ = 0;
         head = new LRUNode(-1, -1);
         tail = new LRUNode(-2, -1);
         head->next = tail;
@@ -42,11 +43,9 @@ public:
         LRUNode* cur = head->next;
         while (cur != head) {
             LRUNode* next = cur->next;
-            // key2LRUNode.erase(cur->key);
             delete cur;
             cur = next;
         }
-        // key2LRUNode.erase(cur->key);
         delete cur;
     }
     
@@ -64,7 +63,7 @@ public:
         // 不存在，考虑 capacity 是否足够
         if (!key2LRUNode.count(key)) {
             // capacity 为 0，需要删除一个
-            if (capacity_ == 0) {
+            if (size_ >= capacity_) {
                 LRUNode* node = tail->prev;
                 // 从链表中删除
                 deleteLRUNode(node);
@@ -72,8 +71,8 @@ public:
                 key2LRUNode.erase(node->key);
                 // 释放内存
                 delete node;
-                // capacity + 1 
-                capacity_ += 1;
+                // size - 1
+                size_ -= 1;
             }
             // 创建新 LRUNode
             LRUNode* newLRUNode = new LRUNode(key, value);
@@ -82,8 +81,8 @@ public:
             // 插入到链表中
             insertLRUNode(newLRUNode);
 
-            // capacity - 1
-            capacity_ -= 1;
+            // size + 1
+            size_ += 1;
 
         } else {
             LRUNode* node = key2LRUNode[key];
@@ -100,11 +99,12 @@ public:
             // 插入链表
             insertLRUNode(node);
 
-            // capacity 不变
+            // size 不变
         }
     }
 
 private:
+    int size_;
     int capacity_;
     unordered_map<int, LRUNode*> key2LRUNode;
     LRUNode* head;
