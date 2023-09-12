@@ -4,14 +4,15 @@
 ***
 
 目前有 `6` 个算法模板/专题和 `1` 个未分类
-- /00-UnclassifiedAlgorithm `未分类算法`
-- /01-SparseTable        `ST表`
-- /02-StringHash         `字符串哈希`
-- /03-Trie               `Trie 树`
-- /04-UnionSet           `并查集（包括路径压缩和按秩合并）`
-- /05-BigSmall           `根号分支专题`
-- /06-Sort               `排序算法（包括链表排序的实现）`
-- /07-Skiplist           `跳表实现`
+- /00-UnclassifiedAlgorithm   `未分类算法`
+- /01-SparseTable             `ST表`
+- /02-StringHash              `字符串哈希`
+- /03-Trie                    `Trie 树`
+- /04-UnionSet                `并查集（包括路径压缩和按秩合并）`
+- /05-BigSmall                `根号分支专题`
+- /06-Sort                    `排序算法（包括链表排序的实现）`
+- /07-Skiplist                `跳表实现`
+- /08-Cache                   `缓存实现`
 
 # 注意事项
 
