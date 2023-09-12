@@ -1,13 +1,15 @@
-// https://leetcode.cn/problems/lfu-cache/description/
 /*
-    对于 LFU 来说，其多了一个 count 的概念
-    即每个 Node 每被使用一次，使用次数加 1 ，每次去除使用次数最少的，当有多个使用次数最少的，再使用 LRU
+    对于每个 count ，一个链表，这个链表是 LRU 的
+    对于整体，是一个单调递增的链表，表示 count 和其对应的 LRU 链表
 
-    这么来看，LFU 是一层对 LRU 的封装
+    1. 先来看 LRU 链表，这里只需要 put 和 del 即可，可以直接套用 LRUCache
+    2. 再来看 LFU 的哈希表 key2LFUNode，cnt2LRUCache
+    3. 再来看 LFU 维护的一个单调递增的链表
 
-    每个使用次数构成一个链表，这个链表是 LRU 的
-    然后有一个 LFU 中 使用次数构成的链表，所以每个使用次数需要对应一个链表
 */
+
+#include <bits/stdc++.h>
+using namespace std;
 
 struct LRUNode {
     LRUNode* prev;
@@ -255,3 +257,30 @@ private:
     unordered_map<int, LRUNode*> key2LRUNode;
     unordered_map<int, IncNode*> cnt2IncNode;
 };
+
+
+
+int main()
+{
+    LFUCache* lfu = new LFUCache(2);
+
+    lfu->put(1, 1);   // cache=[1,_], cnt(1)=1
+    lfu->put(2, 2);   // cache=[2,1], cnt(2)=1, cnt(1)=1
+    cout << lfu->get(1) << endl;      // 返回 1
+    // cache=[1,2], cnt(2)=1, cnt(1)=2
+    lfu->put(3, 3);   // 去除键 2 ，因为 cnt(2)=1 ，使用计数最小
+    // cache=[3,1], cnt(3)=1, cnt(1)=2
+    cout << lfu->get(2) << endl;      // 返回 -1（未找到）
+    cout << lfu->get(3) << endl;      // 返回 3
+    // cache=[3,1], cnt(3)=2, cnt(1)=2
+    lfu->put(4, 4);   // 去除键 1 ，1 和 3 的 cnt 相同，但 1 最久未使用
+    // cache=[4,3], cnt(4)=1, cnt(3)=2
+    cout << lfu->get(1) << endl;      // 返回 -1（未找到）
+    cout << lfu->get(3) << endl;      // 返回 3
+    // cache=[3,4], cnt(4)=1, cnt(3)=3
+    cout << lfu->get(4) << endl;      // 返回 4
+    // cache=[3,4], cnt(4)=2, cnt(3)=3
+
+    return 0;
+}
+

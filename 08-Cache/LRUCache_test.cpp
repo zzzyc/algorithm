@@ -15,15 +15,6 @@ private:
         int val;
         LRUNode(int key, int val): key(key), val(val), prev(nullptr), next(nullptr) {}
     };
-    
-    void removeLRUNodeFromHashTable(LRUNode* node) {
-        if (!key2LRUNode.count(node->key)) return;
-        key2LRUNode.erase(node->key);
-    }
-
-    void insertLRUNodeToHashTable(LRUNode* node) {
-        key2LRUNode[node->key] = node;
-    }
 
     void removeLRUNodeFromLinklist(LRUNode* node) {
         node->prev->next = node->next;
@@ -35,6 +26,15 @@ private:
         head->next->prev = node;
         head->next = node;
         node->prev = head;
+    }
+
+    void removeLRUNodeFromHashTable(LRUNode* node) {
+        if (!key2LRUNode.count(node->key)) return;
+        key2LRUNode.erase(node->key);
+    }
+
+    void insertLRUNodeToHashTable(LRUNode* node) {
+        key2LRUNode[node->key] = node;
     }
 
 public:
@@ -60,54 +60,34 @@ public:
     }
     
     int get(int key) {
-        // key 不存在
         if (!key2LRUNode.count(key)) return -1;
-        
-        // 取出 key 对应的 LRUNode
         LRUNode* node = key2LRUNode[key];
         
-        // 当前 LRUNode 是最近一次使用的，将其放到链表头
         removeLRUNodeFromLinklist(node);
         insertLRUNodeToLinklist(node);
         return node->val;
     }
     
     void put(int key, int value) {
-        // 如果不存在 key ，则需要新建该键值对
         if (!key2LRUNode.count(key)) {
-            // 缓存已满，要从缓存中通过LRU策略弹出最近最少使用的LRUNode
             if (size_ >= capacity_) {
-                // 链表尾即最近最少使用的
                 LRUNode* node = tail->prev;
-                // 从链表中删去
                 removeLRUNodeFromLinklist(node);
-                // 从哈希表中删去
                 removeLRUNodeFromHashTable(node);
-                // 释放 node 的内存空间，如果是智能指针就不需要手动释放了
                 delete node;
-                // 释放一个空间
                 size_ -= 1;
             }
-            // 创建一个新的 LRUNode
             LRUNode* newLRUNode = new LRUNode(key, value);
-            // 添加到链表中
             insertLRUNodeToLinklist(newLRUNode);
-            // 添加到哈希表中
             insertLRUNodeToHashTable(newLRUNode);
             size_ += 1;
 
         } else {
-            // 获取到 key 对应的已存在于缓存中的 LRUNode 节点
             LRUNode* node = key2LRUNode[key];
-            // 更新键值对的权值
             node->val = value;
-            // 从链表中删去
             removeLRUNodeFromLinklist(node);
-            // 添加到链表中
             insertLRUNodeToLinklist(node);
-            // 添加到哈希表中，其实这步是不需要的，因为哈希表对应的是 LRUNode 的地址
             insertLRUNodeToHashTable(node);
-            // 这里只是 key 对应的 value 修改了，故 size_ 不变
         }
     }
 
@@ -119,9 +99,18 @@ private:
     LRUNode* tail;
 };
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache* obj = new LRUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
+ int main()
+ {
+    LRUCache* lRUCache  = new LRUCache(2);
+    lRUCache->put(1, 1); // 缓存是 {1=1}
+    lRUCache->put(2, 2); // 缓存是 {1=1, 2=2}
+    lRUCache->get(1);    // 返回 1
+    lRUCache->put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+    lRUCache->get(2);    // 返回 -1 (未找到)
+    lRUCache->put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+    lRUCache->get(1);    // 返回 -1 (未找到)
+    lRUCache->get(3);    // 返回 3
+    lRUCache->get(4);    // 返回 4
+
+    return 0;
+ }
